@@ -3,15 +3,15 @@ setlocal
 
 del /q logs\*.log >nul 2>&1
 
-javac GCBenchmarkTest.java
+javac GCPauseBenchmark.java
 
-echo â–¶ G1GC í…ŒìŠ¤íŠ¸ ì¤‘...
+echo ¢º G1GC Å×½ºÆ® Áß...
 java -cp . -Xms1g -Xmx1g -Xlog:gc*:file=logs\g1gc.log -XX:+UseG1GC GCBenchmarkTest
 
-echo â–¶ ZGC í…ŒìŠ¤íŠ¸ ì¤‘...
+echo ¢º ZGC Å×½ºÆ® Áß...
 java -cp . -Xms1g -Xmx1g -Xlog:gc*:file=logs\zgc.log -XX:+UseZGC GCBenchmarkTest
 
-echo â–¶ GenZGC í…ŒìŠ¤íŠ¸ ì¤‘...
+echo ¢º GenZGC Å×½ºÆ® Áß...
 java -cp . -Xms1g -Xmx1g -Xlog:gc*:file=logs\genzgc.log -XX:+UseZGC -XX:+ZGenerational GCBenchmarkTest
 
-echo ëª¨ë“  í…ŒìŠ¤íŠ¸ ì™„ë£Œ. ë¡œê·¸ëŠ” logs í´ë” í™•ì¸
+echo ¸ğµç Å×½ºÆ® ¿Ï·á. ·Î±×´Â logs Æú´õ È®ÀÎ
