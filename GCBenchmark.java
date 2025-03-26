@@ -3,34 +3,45 @@ import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GCPauseBenchmark {
+public class GCBenchmark {
 
     public static void main(String[] args) {
         long startApp = System.currentTimeMillis();
         long startGcTime = totalGcTime();
         long startGcCount = totalGcCount();
 
-        System.out.println("GC 벤치마크 시작");
+        System.out.println("GC 스트레스 테스트 시작");
 
-        // 메모리를 반복적으로 할당하고 해제하여 GC 유도
-        List<byte[]> list = new ArrayList<>();
-        for (int i = 0; i < 2_000_000; i++) {
-            list.add(new byte[1024]); // 2GB 이상 할당 유도
-            if (i % 10000 == 0)
-                list.clear();
+        // 4GB 가까이 점유하도록 객체 생성
+        List<byte[]> memoryLoad = new ArrayList<>();
+        final int iterations = 1_000_000; // 충분한 반복
+        final int chunkSize = 512 * 1024; // 512KB
+
+        for (int i = 0; i < iterations; i++) {
+            memoryLoad.add(new byte[chunkSize]);
+
+            // 일정 주기마다 메모리 해제 → GC 유도
+            if (i % 5000 == 0) {
+                memoryLoad.clear();
+                try {
+                    Thread.sleep(10); // GC가 개입할 여유 줌
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
         }
 
         long endApp = System.currentTimeMillis();
         long endGcTime = totalGcTime();
         long endGcCount = totalGcCount();
 
-        System.out.println("총 실행 시간: " + (endApp - startApp) + " ms");
+        System.out.println("총 실행 시간: " + (endApp - startApp) / 1000.0 + " 초");
         System.out.println("GC 횟수: " + (endGcCount - startGcCount));
         System.out.println("GC 지연(Pause) 시간: " + (endGcTime - startGcTime) + " ms");
 
         System.out.println("사용된 GC 목록:");
         for (GarbageCollectorMXBean gc : ManagementFactory.getGarbageCollectorMXBeans()) {
-            System.out.printf(" - %s\n", gc.getName());
+            System.out.printf(" - %s%n", gc.getName());
         }
     }
 
