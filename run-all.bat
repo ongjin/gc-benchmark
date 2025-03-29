@@ -1,6 +1,9 @@
 @echo off
 setlocal
 
+:: 로그 디렉토리 생성
+if not exist logs mkdir logs
+
 :: 로그 디렉토리 정리
 del /q logs\*.log >nul 2>&1
 del /q logs\*.out >nul 2>&1
