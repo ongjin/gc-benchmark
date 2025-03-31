@@ -11,9 +11,15 @@ del /q logs\*.out >nul 2>&1
 :: 컴파일
 javac GCBenchmark.java
 
+:: Serial GC 테스트
+echo ▶ Serial 테스트 중...
+echo [Serial 실행 결과] > logs\zgc.out
+java -cp . -Xms4g -Xmx4g -Xlog:gc*:file=logs\g1gc.log -XX:+UseSerialGC GCBenchmark >> logs\zgc.out
+echo. >> logs\zgc.out
+
 :: G1GC 테스트
 echo ▶ G1GC 테스트 중...
-echo [G1GC 실행 결과] > logs\zgc.out
+echo [G1GC 실행 결과] >> logs\zgc.out
 java -cp . -Xms4g -Xmx4g -Xlog:gc*:file=logs\g1gc.log -XX:+UseG1GC GCBenchmark >> logs\zgc.out
 echo. >> logs\zgc.out
 
